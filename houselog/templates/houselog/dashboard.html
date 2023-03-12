@@ -1,0 +1,25 @@
+{% extends "houselog/base.html" %}
+
+{% block body %}
+<a href="/logout">Logout</a><br><br>
+
+Add new item:
+<form method="POST" action="/add">
+    {% csrf_token %}
+    {{ add_form }}
+    <input type="submit" value="Add">
+</form>
+
+<ul>
+{% for item in houselog_items %}
+<li>
+    <b>{{ item.title }}</b> every {{ item.frequency }} days (last done {{ item.last_done }})
+    <form method="POST" action="/delete?id={{item.id}}" style="display:inline">
+        {% csrf_token %}
+        <input type="submit" value="Delete">
+    </form>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
