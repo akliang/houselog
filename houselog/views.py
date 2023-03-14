@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.contrib import messages
 
 class LoginView(TemplateView):
      template_name = 'houselog/login.html'
@@ -26,7 +27,7 @@ class LoginView(TemplateView):
                login(request, user)
                return redirect('dashboard')
           else:
-               print("Login failed")
+               messages.add_message(request, messages.WARNING, "Incorrect username or password.")
                return redirect('login')
 
 class DashboardListView(LoginRequiredMixin, ListView):
@@ -55,8 +56,8 @@ class AddItemView(LoginRequiredMixin, View):
                profile.save()
                return redirect('dashboard')
           else:
-               # TODO
-               pass
+               messages.add_message(request, messages.WARNING, "Error when adding item.")
+               return redirect('dashboard')
 
 class DeleteItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
@@ -66,8 +67,8 @@ class DeleteItemView(LoginRequiredMixin, View):
                entry.delete()
                return redirect('dashboard')
           else:
-               # TODO
-               pass
+               messages.add_message(request, messages.WARNING, "Error deleting item.")
+               return redirect('dashboard')
 
 class DoneItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
@@ -78,8 +79,8 @@ class DoneItemView(LoginRequiredMixin, View):
                entry.save()
                return redirect('dashboard')
           else:
-               # TODO
-               pass
+               messages.add_message(request, messages.WARNING, "Error updating item.")
+               return redirect('dashboard')
 
 class UpdateItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
