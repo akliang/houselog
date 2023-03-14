@@ -33,7 +33,7 @@
     <form method="POST" action="/add" class="inline">
         {% csrf_token %}
         <input type="text" name="title" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="title" autofocus>
-        <input type="number" name="frequency" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="frequency (days)">
+        <input type="number" name="frequency" class="w-full border border-y-0 border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="frequency (days)">
         <input type="date" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" name="last_done" id="add-date" onClick="this.showPicker()" value="2000-01-01">
         <input type="submit" class="w-full bg-blue-200 p-4 rounded-b-lg" value="Add">
     </form>

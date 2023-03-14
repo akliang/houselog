@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://kit.fontawesome.com/a472daff3c.js" crossorigin="anonymous"></script>
         {% block css %}{% endblock %}
@@ -7,7 +8,7 @@
 
     <body>
 
-        <div class="w-2/3 mx-auto py-6">
+        <div class="w-screen md:w-1/3 h-full mx-auto p-6">
             {% block body %}{% endblock %}
         </div>
 

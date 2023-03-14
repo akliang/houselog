@@ -10,8 +10,12 @@ from datetime import date
 from django.http import HttpResponse, HttpResponseBadRequest
 
 class LoginView(TemplateView):
-     # TODO: redirect user if already logged in
      template_name = 'houselog/login.html'
+
+     def get(self, request, *args, **kwargs):
+          if request.user.is_authenticated:
+               return redirect('dashboard')
+          return super(LoginView, self).get(request, *args, **kwargs)
 
      def post(self, request, *args, **kwargs):
           user = authenticate(
