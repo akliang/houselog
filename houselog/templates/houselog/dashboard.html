@@ -12,17 +12,28 @@
     Houselog Dashboard
 </div>
 
-<div class="text-lg text-center text-slate-500">
+<!-- add button initial -->
+<button class="border border-slate-400 w-full rounded-lg text-lg text-center text-slate-200 bg-slate-600 py-2" onClick="toggleAdd()" id="add-btn-initial">
     Add new item
+</button>
+<!-- add button open -->
+<button class="border border-slate-400 w-full rounded-t-lg text-lg text-center text-slate-200 bg-slate-600 py-2 hidden" onClick="toggleAdd()" id="add-btn-open">
+    Add new item
+</button>
+<div class="hidden" id="add-div">
+    <form method="POST" action="/add" class="inline">
+        {% csrf_token %}
+        <input type="text" name="title" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="title" autofocus>
+        <input type="number" name="frequency" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="frequency (days)">
+        <input type="date" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" name="last_done" id="add-date" onClick="this.showPicker()" value="2000-01-01">
+        <input type="submit" class="w-full bg-blue-200 p-4 rounded-b-lg" value="Add">
+    </form>
 </div>
-<form method="POST" action="/add">
-    {% csrf_token %}
-    <input type="text" name="title" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" placeholder="title" autofocus>
-    <input type="number" name="frequency" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" placeholder="frequency (days)">
-    <!-- TODO: default date -->
-    <input type="date" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" name="last_done">
-    <input type="submit" class="w-full bg-blue-200 p-4 my-2 rounded-lg" value="Add">
-</form>
+
+
+<!-- add a margin between add form and items, regardless if add form is open or not or if item list if empty -->
+<div class="p-4"></div>
+
 
 {% for item in houselog_items %}
 <div class="w-full border border-slate-400 rounded-lg p-4 my-2">
@@ -58,7 +69,40 @@
         </a>
     </div>
 </div>
+{% empty %}
+<div class="border border-slate-300 rounded-lg p-4 text-center text-slate-300 italic">
+    No items to display
+</div>
 {% endfor %}
 
+{% endblock %}
+
+
+
+{% block js %}
+<script type="text/javascript">
+window.onload = (event) => {
+    // set the date picker value to today
+    date = new Date()
+    date_str = date.toISOString().split('T')[0]
+    document.getElementById("add-date").value = date_str
+}
+
+function toggleAdd() {
+    el = document.getElementById("add-div");
+    btn_initial = document.getElementById("add-btn-initial");
+    btn_open = document.getElementById("add-btn-open");
+
+    if (el.style.display == "block") {
+        el.style.display = "none"
+        btn_initial.style.display = "block"
+        btn_open.style.display = "none"
+    } else {
+        el.style.display = "block"
+        btn_initial.style.display = "none"
+        btn_open.style.display = "block"
+    }
+}
+</script>
 {% endblock %}
 
