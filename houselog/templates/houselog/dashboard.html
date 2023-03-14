@@ -1,25 +1,64 @@
 {% extends "houselog/base.html" %}
 
 {% block body %}
-<a href="/logout">Logout</a><br><br>
+<a href="/logout">
+    <div class="w-1/4 float-right bg-yellow-200 p-2 mt-6 mb-8 rounded-lg text-md text-center">Logout</div>
+</a>
 
-Add new item:
+<!-- make sure following items don't float with the Logout button -->
+<div class="clear-both"></div>
+
+<div class="text-3xl font-bold mb-6 text-center">
+    Houselog Dashboard
+</div>
+
+<div class="text-lg text-center text-slate-500">
+    Add new item
+</div>
 <form method="POST" action="/add">
     {% csrf_token %}
-    {{ add_form }}
-    <input type="submit" value="Add">
+    <input type="text" name="title" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" placeholder="title" autofocus>
+    <input type="number" name="frequency" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" placeholder="frequency (days)">
+    <!-- TODO: default date -->
+    <input type="date" class="w-full border border-slate-400 p-4 my-2 text-lg rounded-lg" name="last_done">
+    <input type="submit" class="w-full bg-blue-200 p-4 my-2 rounded-lg" value="Add">
 </form>
 
-<ul>
 {% for item in houselog_items %}
-<li>
-    <b>{{ item.title }}</b> every {{ item.frequency }} days (last done {{ item.last_done }})
-    <form method="POST" action="/delete?id={{item.id}}" style="display:inline">
-        {% csrf_token %}
-        <input type="submit" value="Delete">
-    </form>
-</li>
+<div class="w-full border border-slate-400 rounded-lg p-4 my-2">
+    <div class="mb-4">
+        <p class="text-xl font-bold">
+            {{ item.title }}
+        </p>
+        <p class="text-sm text-slate-400 italic">
+            every {{ item.frequency }} days<br>
+            Last done: {{ item.last_done }}
+        </p>
+    </div>
+
+    <div class="flex flex-row items-center">
+        <div>
+            Next run: {{ item.next_run }}
+        </div>
+        <a class="cursor-pointer ml-auto">
+            <div class="w-min bg-green-200 rounded-full p-3 px-5 mr-1">
+                <form method="POST" action="/" id="done-{{item.id}}" class="inline">
+                    {% csrf_token %}
+                    <i class="fa-solid fa-check"></i>
+                </form>
+            </div>
+        </a>
+        <a class="cursor-pointer" onClick="document.getElementById('delete-{{item.id}}').submit()">
+            <div class="w-min bg-red-200 rounded-full p-3">
+                <form method="POST" action="/delete?id={{item.id}}" id="delete-{{item.id}}" class="inline">
+                    {% csrf_token %}
+                    <i class="fa-solid fa-ban"></i>
+                </form>
+            </div>
+        </a>
+    </div>
+</div>
 {% endfor %}
-</ul>
 
 {% endblock %}
+

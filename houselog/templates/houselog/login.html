@@ -1,10 +1,17 @@
 {% extends "houselog/base.html" %}
+{% load static %}
 
 {% block body %}
+<div>
+    <img src="{% static 'home.png' %}" class="w-1/3 mx-auto py-16">
+</div>
 <form method="POST" action="/login">
     {% csrf_token %}
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-    <input type="submit" value="Login">
+    <input type="text" name="username" class="w-full border border-slate-400 p-4 m-2 text-lg rounded-lg" placeholder="username" autofocus>
+    <input type="password" name="password" class="w-full border border-slate-400 p-4 m-2 text-lg rounded-lg" placeholder="password">
+    <div class="w-1/2 mx-auto">
+        <input type="submit" class="w-full p-4 m-2 text-lg rounded-lg bg-green-300" value="Login">
+    </div>
+    
 </form>
 {% endblock %}

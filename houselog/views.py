@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class LoginView(TemplateView):
+     # TODO: redirect user if already logged in
      template_name = 'houselog/login.html'
 
      def post(self, request, *args, **kwargs):
@@ -28,8 +29,8 @@ class DashboardListView(LoginRequiredMixin, ListView):
      template_name = 'houselog/dashboard.html'
 
      def get_queryset(self):
-          self.user = get_object_or_404(User, id=1)
-          return Houselog.objects.filter(user=self.user)
+          dbres = Houselog.objects.filter(user=self.request.user)
+          return sorted(dbres, key=lambda m: m.next_run)
      
      def get_context_data(self, **kwargs):
           add_form = h_forms.AddItemForm()
@@ -43,7 +44,9 @@ class AddItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
           form = h_forms.AddItemForm(request.POST)
           if form.is_valid():
-               form.save()
+               profile = form.save(commit=False)
+               profile.user = request.user
+               profile.save()
                return redirect('dashboard')
           else:
                # TODO
