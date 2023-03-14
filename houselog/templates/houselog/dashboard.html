@@ -1,5 +1,14 @@
 {% extends "houselog/base.html" %}
 
+{% block css %}
+<style type="text/css">
+    input[type=date]::-webkit-calendar-picker-indicator {
+        -webkit-appearance: none;
+        display: none;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <a href="/logout">
     <div class="w-1/4 float-right bg-yellow-200 p-2 mt-6 mb-8 rounded-lg text-md text-center">Logout</div>
@@ -37,15 +46,20 @@
 
 {% for item in houselog_items %}
 <div class="w-full border border-slate-400 rounded-lg p-4 my-2">
-    <div class="mb-4">
-        <p class="text-xl font-bold">
-            {{ item.title }}
-        </p>
-        <p class="text-sm text-slate-400 italic">
-            every {{ item.frequency }} days<br>
-            Last done: {{ item.last_done }}
-        </p>
-    </div>
+    <form id="update-{{item.id}}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ item.id }}">
+        <div class="mb-4">
+            <input type="text" name="title" class="border-0 text-xl font-bold outline-0" value="{{ item.title }}" onBlur="updateField('update-{{item.id}}')">
+        
+            <p class="text-sm text-slate-400 italic">
+                <!-- TODO: frequency field -->
+                <input type="hidden" name="frequency" value="{{ item.frequency }}">
+                every {{ item.frequency }} days<br>
+                Last done: <input type="date" name="last_done" class="outline-0" value="{{ item.last_done|date:'Y-m-d' }}" onClick="this.showPicker()" onBlur="updateField('update-{{item.id}}')">
+            </p>
+        </div>
+    </form>
 
     <div class="flex flex-row items-center">
         <div>
@@ -102,6 +116,34 @@ function toggleAdd() {
         btn_initial.style.display = "none"
         btn_open.style.display = "block"
     }
+}
+
+function updateField(id) {
+    form = document.getElementById(id)
+    let formData = new FormData(form)
+    id = formData.get('id')
+
+    fetch("/update?id=" + id, {
+        method: "post",
+        body: formData,
+    })
+    .then( res => {
+        console.log(res)
+    })
+
+    // console.log(form)
+    // parts = el.name.split("-")
+    // id = parts[1]
+    // field = parts[2]
+
+    // let formData = new FormData()
+    // formData.append(field, el.value)
+
+    // fetch("/update?id=" + id, {
+    //     method: "post",
+    //     headers: headers,
+    //     body: formData,
+    // })
 }
 </script>
 {% endblock %}

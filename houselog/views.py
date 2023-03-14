@@ -7,6 +7,7 @@ import houselog.forms as h_forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
+from django.http import HttpResponse, HttpResponseBadRequest
 
 class LoginView(TemplateView):
      # TODO: redirect user if already logged in
@@ -75,3 +76,21 @@ class DoneItemView(LoginRequiredMixin, View):
           else:
                # TODO
                pass
+
+class UpdateItemView(LoginRequiredMixin, View):
+     def post(self, request, *args, **kwargs):
+          id = request.GET.get('id', None)
+          instance = Houselog.objects.get(id=id)
+          
+          if instance:
+               form = h_forms.AddItemForm(request.POST, instance=instance)
+               if form.is_valid():
+                    form.save()
+                    return HttpResponse()
+               else:
+                    print(form.errors)
+                    # TODO
+                    return HttpResponseBadRequest("%s" % (form.errors))
+          else:
+               # TODO
+               return HttpResponseBadRequest()
