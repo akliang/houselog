@@ -51,9 +51,9 @@
         <div>
             Next run: {{ item.next_run }}
         </div>
-        <a class="cursor-pointer ml-auto">
+        <a class="cursor-pointer ml-auto" onClick="document.getElementById('done-{{item.id}}').submit()">
             <div class="w-min bg-green-200 rounded-full p-3 px-5 mr-1">
-                <form method="POST" action="/" id="done-{{item.id}}" class="inline">
+                <form method="POST" action="/done?id={{item.id}}" id="done-{{item.id}}" class="inline">
                     {% csrf_token %}
                     <i class="fa-solid fa-check"></i>
                 </form>

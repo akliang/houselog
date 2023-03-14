@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 import houselog.forms as h_forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from datetime import date
 
 class LoginView(TemplateView):
      # TODO: redirect user if already logged in
@@ -52,7 +53,7 @@ class AddItemView(LoginRequiredMixin, View):
                # TODO
                pass
 
-class DeleteItemView(LoginRequiredMixin, View):  
+class DeleteItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
           id = request.GET.get('id', None)
           if id:
@@ -63,3 +64,14 @@ class DeleteItemView(LoginRequiredMixin, View):
                # TODO
                pass
 
+class DoneItemView(LoginRequiredMixin, View):
+     def post(self, request, *args, **kwargs):
+          id = request.GET.get('id', None)
+          if id:
+               entry = Houselog.objects.get(id=id)
+               entry.last_done = date.today()
+               entry.save()
+               return redirect('dashboard')
+          else:
+               # TODO
+               pass
