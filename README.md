@@ -24,5 +24,8 @@ Includes:
 mv .env.example .env
 vim .env
 docker-compose build
+docker-compose run web python manage.py migrate
+docker-compose run web python manage.py collectstatic
+docker-compose run web python manage.py createsuperuser
 docker-compose up
 ```
