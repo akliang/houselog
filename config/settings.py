@@ -107,7 +107,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TODO: change all times to derive from dayjs frontend and change this back to UTC?
+TIME_ZONE = 'US/Eastern'
 
 USE_I18N = True
 

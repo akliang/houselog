@@ -6,12 +6,4 @@ from django.contrib.auth.models import User
 class AddItemForm(ModelForm):
     class Meta:
         model = Houselog
-        fields = ['title', 'frequency', 'last_done']
-        
-# class EditItemForm(ModelForm):
-#     class Meta:
-#         model = Houselog
-#         fields = ['id', 'title', 'frequency', 'last_done']
-#         widgets = {
-#             'id': forms.HiddenInput(),
-#         }
+        fields = ['title', 'frequency', 'last_done', 'note']

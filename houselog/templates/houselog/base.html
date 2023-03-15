@@ -3,12 +3,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://kit.fontawesome.com/a472daff3c.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+        <!-- suppress the calendar icon for input[date] -->
+        <style type="text/css">
+            input[type=date]::-webkit-calendar-picker-indicator {
+                -webkit-appearance: none;
+                display: none;
+            }
+        </style>
         {% block css %}{% endblock %}
     </head>
 
     <body>
 
-        <div class="w-screen md:w-1/3 h-full mx-auto p-6">
+        <div class="w-screen md:w-2/3 xl:w-1/2 h-full mx-auto p-6">
+            {% if not suppress_header %}
+                <a href="/logout">
+                    <div class="w-1/4 float-right bg-yellow-200 p-2 mt-6 mb-8 rounded-lg text-md text-center">Logout</div>
+                </a>
+                
+                <!-- make sure following items don't float with the Logout button -->
+                <div class="clear-both"></div>
+                
+                <div class="text-3xl font-bold mb-6 text-center">
+                    Houselog Dashboard
+                </div>
+            {% endif %}
+
             {% if messages %}
                 {% for message in messages %}
                     <div class="p-4 rounded-lg text-center

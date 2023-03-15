@@ -8,6 +8,7 @@ class Houselog(models.Model):
     last_done = models.DateField()
     frequency = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    note = models.TextField(blank=True, null=True)
 
     @property
     def next_run(self):

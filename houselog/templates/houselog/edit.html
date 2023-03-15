@@ -1,0 +1,28 @@
+{% extends "houselog/base.html" %}
+
+
+{% block body %}
+<div class="border border-slate-400 w-full rounded-t-lg text-lg text-center text-slate-200 bg-slate-600 py-2">
+    Update item
+</div>
+<div>
+    <form method="POST" action="/edit?id={{item.id}}" class="inline">
+        {% csrf_token %}
+        <input type="text" name="title" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="title" value="{{ item.title }}">
+        <input type="number" name="frequency" class="w-full border border-y-0 border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="frequency (days)" value="{{ item.frequency }}">
+        <input type="date" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" name="last_done" id="add-date" onClick="this.showPicker()" value="{{ item.last_done|date:'Y-m-d' }}">
+        <textarea name="note" class="w-full border border-slate-200 border-t-0 p-4 text-lg outline-0 text-slate-400 resize-none" rows="4" placeholder="notes">{{ item.note }}</textarea>
+        <div class="flex flex-row">
+            <div class="basis-1/2">
+                <button class="w-full bg-red-200 p-4 rounded-bl-lg cursor-pointer" onClick="window.location('/')">Cancel</button>
+            </div>
+            <div class="basis-1/2">
+                <input type="submit" class="w-full bg-blue-200 p-4 rounded-br-lg cursor-pointer" value="Update">
+            </div>
+        </div>
+        
+        
+    </form>
+</div>
+
+{% endblock %}

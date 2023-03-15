@@ -7,23 +7,4 @@ services:
       - .:/code
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
-    depends_on:
-      - pocketbase_houselog_django
-  pocketbase_houselog_django:
-    image: ghcr.io/muchobien/pocketbase:latest
-    container_name: pocketbase_houselog_django
-    restart: unless-stopped
-    command:
-      - --encryptionEnv #optional
-      - ENCRYPTION #optional
-      - --http
-      - "0.0.0.0:$POCKETBASE_PORT"
-    environment:
-      ENCRYPTION: ${POCKETBASE_SECRET} #optional
-    ports:
-      - "${POCKETBASE_PORT}:${POCKETBASE_PORT}"
-    volumes:
-      - pocketbase:/pb_data_houselog_django
 
-volumes:
-  pocketbase:

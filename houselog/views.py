@@ -7,11 +7,21 @@ import houselog.forms as h_forms
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import date
+import datetime
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
+from django.utils import timezone
 
 class LoginView(TemplateView):
      template_name = 'houselog/login.html'
+
+     # hide logout and title
+     def get_context_data(self, **kwargs):
+          context = {
+               'suppress_header': True,
+          }
+          kwargs.update(context)
+          return super().get_context_data(**kwargs)
 
      def get(self, request, *args, **kwargs):
           if request.user.is_authenticated:
@@ -31,7 +41,6 @@ class LoginView(TemplateView):
                return redirect('login')
 
 class DashboardListView(LoginRequiredMixin, ListView):
-    #  queryset = Houselog.objects.all()
      context_object_name = 'houselog_items'
      template_name = 'houselog/dashboard.html'
 
@@ -75,7 +84,7 @@ class DoneItemView(LoginRequiredMixin, View):
           id = request.GET.get('id', None)
           if id:
                entry = Houselog.objects.get(id=id)
-               entry.last_done = date.today()
+               entry.last_done = request.POST.get('update_last_done')
                entry.save()
                return redirect('dashboard')
           else:
@@ -99,3 +108,24 @@ class UpdateItemView(LoginRequiredMixin, View):
           else:
                # TODO
                return HttpResponseBadRequest()
+          
+class EditItemView(LoginRequiredMixin, ListView):
+     context_object_name = 'item'
+     template_name = 'houselog/edit.html'
+
+     def get_queryset(self):
+          id = self.request.GET.get('id', None)
+          return Houselog.objects.get(id=id)
+     
+     def post(self, request, *args, **kwargs):
+          id = self.request.GET.get('id', None)
+          instance = Houselog.objects.get(id=id)
+          
+          if instance:
+               form = h_forms.AddItemForm(request.POST, instance=instance)
+               if form.is_valid():
+                    form.save()
+                    return redirect('dashboard')
+               else:
+                    messages.add_message(request, messages.WARNING, f"Error: {form.errors}")
+                    return redirect('edit', id=id)

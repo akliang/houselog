@@ -1,26 +1,6 @@
 {% extends "houselog/base.html" %}
 
-{% block css %}
-<style type="text/css">
-    input[type=date]::-webkit-calendar-picker-indicator {
-        -webkit-appearance: none;
-        display: none;
-    }
-</style>
-{% endblock %}
-
 {% block body %}
-<a href="/logout">
-    <div class="w-1/4 float-right bg-yellow-200 p-2 mt-6 mb-8 rounded-lg text-md text-center">Logout</div>
-</a>
-
-<!-- make sure following items don't float with the Logout button -->
-<div class="clear-both"></div>
-
-<div class="text-3xl font-bold mb-6 text-center">
-    Houselog Dashboard
-</div>
-
 <!-- add button initial -->
 <button class="border border-slate-400 w-full rounded-lg text-lg text-center text-slate-200 bg-slate-600 py-2" onClick="toggleAdd()" id="add-btn-initial">
     Add new item
@@ -34,7 +14,8 @@
         {% csrf_token %}
         <input type="text" name="title" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="title" autofocus>
         <input type="number" name="frequency" class="w-full border border-y-0 border-slate-200 p-4 text-lg outline-0 text-slate-400" placeholder="frequency (days)">
-        <input type="date" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" name="last_done" id="add-date" onClick="this.showPicker()" value="2000-01-01">
+        <input type="date" class="w-full border border-slate-200 p-4 text-lg outline-0 text-slate-400" name="last_done" id="add-date" onClick="this.showPicker()">
+        <textarea name="note" class="w-full border border-slate-200 border-t-0 p-4 text-lg outline-0 text-slate-400 resize-none" rows="4" placeholder="notes"></textarea>
         <input type="submit" class="w-full bg-blue-200 p-4 rounded-b-lg" value="Add">
     </form>
 </div>
@@ -46,22 +27,30 @@
 
 {% for item in houselog_items %}
 <div class="w-full border border-slate-400 rounded-lg p-4 my-2">
-    <form id="update-{{item.id}}" class="inline">
-        {% csrf_token %}
-        <input type="hidden" name="id" value="{{ item.id }}">
-        <div class="mb-4">
-            <input type="text" name="title" class="border-0 text-xl font-bold outline-0" value="{{ item.title }}" onBlur="updateField('update-{{item.id}}')">
-        
+    <div class="flex flex-row">
+        <div class="w-full">
+            <p class="w-full text-xl font-bold mb-4">
+                {{ item.title }}
+                <a href="/edit?id={{item.id}}">
+                    <i class="fa-regular fa-pen-to-square ml-2"></i>
+                </a>
+            </p>
             <p class="text-sm text-slate-400 italic">
-                <!-- TODO: frequency field -->
-                <input type="hidden" name="frequency" value="{{ item.frequency }}">
                 every {{ item.frequency }} days<br>
-                Last done: <input type="date" name="last_done" class="outline-0" value="{{ item.last_done|date:'Y-m-d' }}" onClick="this.showPicker()" onBlur="updateField('update-{{item.id}}')">
+                Last done: {{ item.last_done }}
             </p>
         </div>
-    </form>
+        {% if item.note %}
+            <div>
+                <a onClick="toggleInfo({{item.id}})">
+                    <i class="fa-regular fa-note-sticky"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+        
 
-    <div class="flex flex-row items-center">
+    <div id="info-{{item.id}}" class="flex flex-row items-center">
         <div>
             Next run: {{ item.next_run }}
         </div>
@@ -69,6 +58,7 @@
             <div class="w-min bg-green-200 rounded-full p-3 px-5 mr-1">
                 <form method="POST" action="/done?id={{item.id}}" id="done-{{item.id}}" class="inline">
                     {% csrf_token %}
+                    <input type="hidden" name="update_last_done">
                     <i class="fa-solid fa-check"></i>
                 </form>
             </div>
@@ -82,6 +72,12 @@
             </div>
         </a>
     </div>
+
+    {% if item.note %}
+        <div id="info2-{{item.id}}" class="hidden py-2">
+            {{ item.note }}
+        </div>
+    {% endif %}
 </div>
 {% empty %}
 <div class="border border-slate-300 rounded-lg p-4 text-center text-slate-300 italic">
@@ -97,9 +93,12 @@
 <script type="text/javascript">
 window.onload = (event) => {
     // set the date picker value to today
-    date = new Date()
-    date_str = date.toISOString().split('T')[0]
+    date = dayjs().format()
+    date_str = date.split('T')[0]
     document.getElementById("add-date").value = date_str
+    document.getElementsByName("update_last_done").forEach( el => {
+        el.value = date_str
+    })
 }
 
 function toggleAdd() {
@@ -118,32 +117,31 @@ function toggleAdd() {
     }
 }
 
-function updateField(id) {
-    form = document.getElementById(id)
-    let formData = new FormData(form)
-    id = formData.get('id')
+// function updateField(id) {
+//     form = document.getElementById(id)
+//     let formData = new FormData(form)
+//     id = formData.get('id')
 
-    fetch("/update?id=" + id, {
-        method: "post",
-        body: formData,
-    })
-    .then( res => {
-        console.log(res)
-    })
+//     fetch("/update?id=" + id, {
+//         method: "post",
+//         body: formData,
+//     })
+//     .then( res => {
+//         console.log(res)
+//     })
+// }
 
-    // console.log(form)
-    // parts = el.name.split("-")
-    // id = parts[1]
-    // field = parts[2]
-
-    // let formData = new FormData()
-    // formData.append(field, el.value)
-
-    // fetch("/update?id=" + id, {
-    //     method: "post",
-    //     headers: headers,
-    //     body: formData,
-    // })
+function toggleInfo(id) {
+    el = document.getElementById("info-" + id)
+    el2 = document.getElementById("info2-" + id)
+    
+    if (el.style.display == "none") {
+        el.style.display = "flex"
+        el2.style.display = "none"
+    } else {
+        el.style.display = "none"
+        el2.style.display = "flex"
+    }
 }
 </script>
 {% endblock %}
