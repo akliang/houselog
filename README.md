@@ -7,9 +7,8 @@ Includes:
 - email reminder (WIP)
 - notes (like furnace filter size, or fridge model, etc)
 
-![login](docs/images/login.png)
-
-![dashboard](docs/images/dashboard.png)
+<img src="docs/images/login.png" width=400>
+<img src="docs/images/dashboard.png" width=400>
 
 ### Usage
 
