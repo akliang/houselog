@@ -9,7 +9,7 @@ Includes:
 
 <table>
 <tr>
-<td>
+<td style="vertical-align:top">
     <img src="docs/images/login.png" width=400>
 </td>
 <td>
