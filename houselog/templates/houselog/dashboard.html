@@ -66,15 +66,23 @@
                 </form>
             </div>
         </a>
-        <a class="cursor-pointer" onClick="document.getElementById('delete-{{item.id}}').submit()">
+
+        <form method="POST" action="/delete?id={{item.id}}" id="delete-{{item.id}}-form" class="inline">
+            {% csrf_token %}
+        </form>
+        <a class="cursor-pointer" id="confirm-delete-{{item.id}}-one" onClick="showDeleteConfirm({{item.id}})">
             <div class="w-min bg-red-200 rounded-full p-3">
-                <form method="POST" action="/delete?id={{item.id}}" id="delete-{{item.id}}" class="inline">
-                    {% csrf_token %}
-                    <i class="fa-solid fa-ban"></i>
-                </form>
+                <i class="fa-solid fa-ban"></i>
+            </div>
+        </a>
+        <a class="cursor-pointer hidden" id="confirm-delete-{{item.id}}-two" onClick="document.getElementById('delete-{{item.id}}-form').submit()">
+            <div class="w-min bg-red-400 rounded-full p-3">
+                <i class="fa-solid fa-check-double"></i>
             </div>
         </a>
     </div>
+
+    
 
     {% if item.note %}
         <div id="info2-{{item.id}}" class="hidden py-2">
@@ -120,20 +128,6 @@ function toggleAdd() {
     }
 }
 
-// function updateField(id) {
-//     form = document.getElementById(id)
-//     let formData = new FormData(form)
-//     id = formData.get('id')
-
-//     fetch("/update?id=" + id, {
-//         method: "post",
-//         body: formData,
-//     })
-//     .then( res => {
-//         console.log(res)
-//     })
-// }
-
 function toggleInfo(id) {
     el = document.getElementById("info-" + id)
     el2 = document.getElementById("info2-" + id)
@@ -145,6 +139,25 @@ function toggleInfo(id) {
         el.style.display = "none"
         el2.style.display = "flex"
     }
+}
+
+function showDeleteConfirm(id) {
+    el = document.getElementById("confirm-delete-" + id + "-one")
+    el2 = document.getElementById("confirm-delete-" + id + "-two")
+
+    el.style.display = "none"
+    el2.style.display = "block"
+    setTimeout(() => {
+        undoDeleteConfirm(id)
+    }, 2000)
+}
+
+function undoDeleteConfirm(id) {
+    el = document.getElementById("confirm-delete-" + id + "-one")
+    el2 = document.getElementById("confirm-delete-" + id + "-two")
+
+    el.style.display = "block"
+    el2.style.display = "none"
 }
 </script>
 {% endblock %}

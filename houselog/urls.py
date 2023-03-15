@@ -9,6 +9,5 @@ urlpatterns = [
     path('add',hlv.AddItemView.as_view(), name='add'),
     path('delete', hlv.DeleteItemView.as_view(), name='delete'),
     path('done', hlv.DoneItemView.as_view(), name='done'),
-    # path('update', hlv.UpdateItemView.as_view(), name='update'),
     path('edit', hlv.EditItemView.as_view(), name='edit'),
 ]

@@ -90,24 +90,6 @@ class DoneItemView(LoginRequiredMixin, View):
           else:
                messages.add_message(request, messages.WARNING, "Error updating item.")
                return redirect('dashboard')
-
-class UpdateItemView(LoginRequiredMixin, View):
-     def post(self, request, *args, **kwargs):
-          id = request.GET.get('id', None)
-          instance = Houselog.objects.get(id=id)
-          
-          if instance:
-               form = h_forms.AddItemForm(request.POST, instance=instance)
-               if form.is_valid():
-                    form.save()
-                    return HttpResponse()
-               else:
-                    print(form.errors)
-                    # TODO
-                    return HttpResponseBadRequest("%s" % (form.errors))
-          else:
-               # TODO
-               return HttpResponseBadRequest()
           
 class EditItemView(LoginRequiredMixin, ListView):
      context_object_name = 'item'
