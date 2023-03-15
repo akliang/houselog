@@ -26,7 +26,10 @@
 
 
 {% for item in houselog_items %}
-<div class="w-full border border-slate-400 rounded-lg p-4 my-2">
+<div class="w-full border-2 rounded-lg p-4 my-2
+    {% if item.status == 'ok' %}border-green-200{% endif %}
+    {% if item.status == 'soon' %}border-yellow-300{% endif %}
+    {% if item.status == 'late' %}border-red-200{% endif %}">
     <div class="flex flex-row">
         <div class="w-full">
             <p class="w-full text-xl font-bold mb-4">
