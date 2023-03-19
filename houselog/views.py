@@ -11,11 +11,12 @@ import datetime
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.contrib import messages
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 class LoginView(TemplateView):
      template_name = 'houselog/login.html'
 
-     # hide logout and title
+     # hide logout and title in template
      def get_context_data(self, **kwargs):
           context = {
                'suppress_header': True,
@@ -72,7 +73,7 @@ class DeleteItemView(LoginRequiredMixin, View):
      def post(self, request, *args, **kwargs):
           id = request.GET.get('id', None)
           if id:
-               entry = Houselog.objects.get(id=id)
+               entry = get_object_or_404(Houselog, id=id)
                entry.delete()
                return redirect('dashboard')
           else:
@@ -80,6 +81,9 @@ class DeleteItemView(LoginRequiredMixin, View):
                return redirect('dashboard')
 
 class DoneItemView(LoginRequiredMixin, View):
+     """
+     TODO: convert this to GET for future email-interactions
+     """
      def post(self, request, *args, **kwargs):
           id = request.GET.get('id', None)
           if id:
@@ -89,7 +93,7 @@ class DoneItemView(LoginRequiredMixin, View):
                return redirect('dashboard')
           else:
                messages.add_message(request, messages.WARNING, "Error updating item.")
-               return redirect('dashboard')
+               return redirect('login')
           
 class EditItemView(LoginRequiredMixin, ListView):
      context_object_name = 'item'
@@ -97,17 +101,16 @@ class EditItemView(LoginRequiredMixin, ListView):
 
      def get_queryset(self):
           id = self.request.GET.get('id', None)
-          return Houselog.objects.get(id=id)
+          return get_object_or_404(Houselog, id=id)
      
      def post(self, request, *args, **kwargs):
           id = self.request.GET.get('id', None)
-          instance = Houselog.objects.get(id=id)
-          
-          if instance:
-               form = h_forms.AddItemForm(request.POST, instance=instance)
-               if form.is_valid():
-                    form.save()
-                    return redirect('dashboard')
-               else:
-                    messages.add_message(request, messages.WARNING, f"Error: {form.errors}")
-                    return redirect('edit', id=id)
+          instance = get_object_or_404(Houselog, id=id)
+
+          form = h_forms.AddItemForm(request.POST, instance=instance)
+          if form.is_valid():
+               form.save()
+               return redirect('dashboard')
+          else:
+               messages.add_message(request, messages.WARNING, f"Error: {form.errors}")
+               return redirect(f'/edit?id={id}')

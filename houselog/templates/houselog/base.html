@@ -42,7 +42,7 @@
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="p-4 rounded-lg text-center
+                    <div class="p-4 mb-8 rounded-lg text-center
                     {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %} bg-slate-200{% endif %}
                     {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} bg-green-200{% endif %}
                     {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %} bg-yellow-200{% endif %}
